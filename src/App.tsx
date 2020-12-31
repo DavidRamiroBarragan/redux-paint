@@ -1,20 +1,36 @@
-import { MouseEvent, useEffect, useRef } from "react";
+import { MouseEvent, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { beginStroke, endStroke, updateStroke } from "./sourceOfTrue/actions";
-import "./App.css";
 import { drawStroke, setCanvasSize, clearCanvas } from "./utils/canvasUtils";
-import { currentStrokeSelector } from "./sourceOfTrue/selectors";
 import { RootState } from "./types/types";
 import ColorPanel from "./components/ColorPanel";
+import EditPanel from "./components/EditPanel";
 
+import "./App.css";
+import { currentStrokeSelector } from "./sourceOfTrue/currentStroke/selectors";
+import {
+  beginStroke,
+  endStroke,
+  updateStroke,
+} from "./sourceOfTrue/currentStroke/actions";
+import { historyIndexSelector } from "./sourceOfTrue/historyIndex/selectors";
+import { strokesSelector } from "./sourceOfTrue/strokes/selectors";
+import { useCanvas } from "./CanvasContext";
+import FilePanel from "./components/FilePanel";
 const WIDTH = 1024;
 const HEIGHT = 768;
 
 function App() {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const canvasRef = useCanvas();
   const currentStroke = useSelector<RootState, RootState["currentStroke"]>(
     currentStrokeSelector
   );
+
+  const historyIndex = useSelector<RootState, RootState["historyIndex"]>(
+    historyIndexSelector
+  );
+
+  const strokes = useSelector<RootState, RootState["strokes"]>(strokesSelector);
+
   const dispatch = useDispatch();
   const isDrawing = !!currentStroke.points.length;
 
@@ -29,7 +45,7 @@ function App() {
 
   const endDrawing = () => {
     if (isDrawing) {
-      dispatch(endStroke());
+      dispatch(endStroke(historyIndex, currentStroke));
     }
   };
   const draw = ({ nativeEvent }: React.MouseEvent<HTMLCanvasElement>) => {
@@ -50,7 +66,24 @@ function App() {
     requestAnimationFrame(() =>
       drawStroke(context, currentStroke.points, currentStroke.color)
     );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentStroke]);
+
+  useEffect(() => {
+    const { canvas, context } = getCanvasWithContext();
+
+    if (!context || !canvas) {
+      return;
+    }
+
+    requestAnimationFrame(() => {
+      clearCanvas(canvas);
+      strokes.slice(0, strokes.length - historyIndex).forEach((stroke) => {
+        drawStroke(context, stroke.points, stroke.color);
+      });
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [historyIndex]);
 
   useEffect(() => {
     const { canvas, context } = getCanvasWithContext();
@@ -66,6 +99,7 @@ function App() {
     context.strokeStyle = "black";
 
     clearCanvas(canvas);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
@@ -76,7 +110,9 @@ function App() {
           <button aria-label="Close" />
         </div>
       </div>
+      <EditPanel />
       <ColorPanel />
+      <FilePanel />
       <canvas
         onMouseDown={startDrawing}
         onMouseUp={endDrawing}
