@@ -1,5 +1,3 @@
-import { NumericLiteral } from "typescript";
-
 export type RootState = {
   currentStroke: Stroke;
   strokes: Stroke[];
