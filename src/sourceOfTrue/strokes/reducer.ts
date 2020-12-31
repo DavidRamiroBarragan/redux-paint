@@ -1,17 +1,22 @@
-import { RootState } from "../../types";
-import { Action, END_STROKE } from "./actions";
+import { ActionReducerMapBuilder, createReducer } from "@reduxjs/toolkit";
+import { RootState, Stroke } from "../../types";
+import { endStroke } from "./actions";
 
-export const reducer = (state: RootState["strokes"] = [], action: Action) => {
-  switch (action.type) {
-    case END_STROKE: {
-      const { historyLimit, stroke } = action.payload;
-      if (!stroke.points.length) {
-        return false;
+const initialStateStrokes: RootState["strokes"] = [];
+/**
+ * This file was create only to learn how create a reducer in redux-toolkit
+ * with the utility createReducer() in this application we will use slices
+ */
+export const reducer = createReducer(
+  initialStateStrokes,
+  (builder: ActionReducerMapBuilder<Stroke[]>) => {
+    builder.addCase(endStroke, (state, action) => {
+      const { historyIndex, stroke } = action.payload;
+      if (historyIndex === 0) {
+        state.push(stroke);
+      } else {
+        state.splice(-historyIndex, historyIndex, stroke);
       }
-      return [...state.slice(0, state.length - historyLimit), stroke];
-    }
-
-    default:
-      return state;
+    });
   }
-};
+);

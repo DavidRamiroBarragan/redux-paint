@@ -1,37 +1,23 @@
+import { createAction } from "@reduxjs/toolkit";
+import {
+  BEGIN_STROKE,
+  END_STROKE,
+  SET_STROKE_COLOR,
+  UPDATE_STROKE,
+} from "../../constants/actions";
 import { Point, Stroke } from "../../types";
 
-export const BEGIN_STROKE = "BEGIN_STROKE";
-export const UPDATE_STROKE = "UPDATE_STROKE";
-export const END_STROKE = "END_STROKE";
-export const SET_STROKE_COLOR = "SET_STROKE_COLOR";
+/**
+ * This file was create only to learn how create a reducer in redux-toolkit
+ * with the utility createAction() in this application we will use slices
+ */
 
-export type Action =
-  | { type: typeof BEGIN_STROKE; payload: Point }
-  | { type: typeof UPDATE_STROKE; payload: Point }
-  | { type: typeof SET_STROKE_COLOR; payload: string }
-  | {
-      type: typeof END_STROKE;
-      payload: { stroke: Stroke; historyLimit: number };
-    };
+export const beginStroke = createAction<Point>(BEGIN_STROKE);
 
-// Acion creators
+export const updateStroke = createAction<Point>(UPDATE_STROKE);
 
-export const beginStroke = (x: number, y: number) => {
-  return { type: BEGIN_STROKE, payload: { x, y } };
-};
+export const setStrokeColor = createAction<string>(SET_STROKE_COLOR);
 
-export const updateStroke = (x: number, y: number) => {
-  return { type: UPDATE_STROKE, payload: { x, y } };
-};
-
-export const endStroke = (historyLimit: number, stroke: Stroke) => ({
-  type: END_STROKE,
-  payload: {
-    stroke,
-    historyLimit,
-  },
-});
-
-export const setStrokeColor = (color: string) => {
-  return { type: SET_STROKE_COLOR, payload: color };
-};
+export const endStroke = createAction<{ stroke: Stroke; historyIndex: number }>(
+  END_STROKE
+);

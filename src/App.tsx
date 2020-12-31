@@ -1,23 +1,19 @@
 import { MouseEvent, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { drawStroke, setCanvasSize, clearCanvas } from "./utils/canvasUtils";
-import { RootState } from "./types/types";
 import ColorPanel from "./components/ColorPanel";
 import EditPanel from "./components/EditPanel";
+import FilePanel from "./components/FilePanel";
+import { RootState } from "./types/types";
+import { beginStroke, updateStroke } from "./sourceOfTrue/currentStroke/slice";
+import { endStroke } from "./sourceOfTrue/sharedActions/actions";
+import { strokesSelector } from "./sourceOfTrue/strokes/selectors";
+import { historyIndexSelector } from "./sourceOfTrue/historyIndex/selectors";
+import { currentStrokeSelector } from "./sourceOfTrue/currentStroke/selectors";
+import { drawStroke, setCanvasSize, clearCanvas } from "./utils/canvasUtils";
+import { useCanvas } from "./CanvasContext";
 
 import "./App.css";
-import { currentStrokeSelector } from "./sourceOfTrue/currentStroke/selectors";
-import {
-  beginStroke,
-  endStroke,
-  updateStroke,
-} from "./sourceOfTrue/currentStroke/actions";
-import { historyIndexSelector } from "./sourceOfTrue/historyIndex/selectors";
-import { strokesSelector } from "./sourceOfTrue/strokes/selectors";
-import { useCanvas } from "./CanvasContext";
-import FilePanel from "./components/FilePanel";
-const WIDTH = 1024;
-const HEIGHT = 768;
+import { WIDTH, HEIGHT } from "./constants/shared";
 
 function App() {
   const canvasRef = useCanvas();
@@ -40,12 +36,12 @@ function App() {
 
   const startDrawing = ({ nativeEvent }: MouseEvent<HTMLCanvasElement>) => {
     const { offsetX, offsetY } = nativeEvent;
-    dispatch(beginStroke(offsetX, offsetY));
+    dispatch(beginStroke({ x: offsetX, y: offsetY }));
   };
 
   const endDrawing = () => {
     if (isDrawing) {
-      dispatch(endStroke(historyIndex, currentStroke));
+      dispatch(endStroke({ historyIndex, stroke: currentStroke }));
     }
   };
   const draw = ({ nativeEvent }: React.MouseEvent<HTMLCanvasElement>) => {
@@ -54,7 +50,7 @@ function App() {
     }
     const { offsetX, offsetY } = nativeEvent;
 
-    dispatch(updateStroke(offsetX, offsetY));
+    dispatch(updateStroke({ x: offsetX, y: offsetY }));
   };
 
   useEffect(() => {

@@ -1,17 +1,11 @@
+import { createAction } from "@reduxjs/toolkit";
+import { END_STROKE } from "../../constants/actions";
 import { Stroke } from "../../types";
 
-export const END_STROKE = "END_STROKE";
-
-export type Action = {
-  type: typeof END_STROKE;
-  payload: { stroke: Stroke; historyLimit: number };
-};
-
-export type HistoryTypeAction = {
-  type: typeof END_STROKE;
-  payload: { stroke: Stroke; historyLimit: number };
-};
-
-export const endStroke = (historyLimit: number, stroke: Stroke) => {
-  return { type: END_STROKE, payload: { historyLimit, stroke } };
-};
+/**
+ * This file was create only to learn how create a reducer in redux-toolkit
+ * with the utility createAction() in this application we will use slices
+ */
+export const endStroke = createAction<{ stroke: Stroke; historyIndex: number }>(
+  END_STROKE
+);
