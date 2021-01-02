@@ -42,7 +42,7 @@ const ProjectsSaveModal = () => {
         </div>
         <div className="filed-row">
           <button onClick={onProjectSave}>Save</button>
-          <button onClick={() => dispatch(hide())}>Save</button>
+          <button onClick={() => dispatch(hide())}>Cancel</button>
         </div>
       </div>
     </div>

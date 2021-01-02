@@ -4,6 +4,7 @@ import bodyParser from "body-parser";
 import lowdb from "lowdb";
 import FileSync from "lowdb/adapters/FileSync";
 import { nanoid } from "nanoid";
+import { Project } from "./types";
 
 let db = lowdb(new FileSync<{ projects: Project[] }>("db.json"));
 
@@ -16,22 +17,6 @@ db.defaults({
     },
   ],
 }).write();
-
-interface Project {
-  id: string;
-  name: string;
-  strokes: Stroke[];
-  image: string;
-}
-
-interface Stroke {
-  point: Point[];
-}
-
-interface Point {
-  x: number;
-  y: number;
-}
 
 const app = express();
 
