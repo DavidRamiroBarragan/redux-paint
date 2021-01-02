@@ -30,3 +30,5 @@ export const COLORS = [
   "#804000",
   "#ff8040",
 ];
+export const PROJECTS_MODAL = "PROJECTS_MODAL";
+export const PROJECTS_SAVE_MODAL = "PROJECTS_SAVE_MODAL";

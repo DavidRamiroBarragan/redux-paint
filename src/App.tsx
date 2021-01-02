@@ -14,6 +14,7 @@ import { useCanvas } from "./CanvasContext";
 
 import "./App.css";
 import { WIDTH, HEIGHT } from "./constants/shared";
+import ModalLayer from "./components/ModalLayer";
 
 function App() {
   const canvasRef = useCanvas();
@@ -109,6 +110,7 @@ function App() {
       <EditPanel />
       <ColorPanel />
       <FilePanel />
+      <ModalLayer />
       <canvas
         onMouseDown={startDrawing}
         onMouseUp={endDrawing}
